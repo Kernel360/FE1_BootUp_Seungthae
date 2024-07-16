@@ -21,23 +21,60 @@
       ];
       const $container = document.getElementById(container);
       const allBtnList = [];
-      const allInputList = [];
 
-      const getRandomInt = (max) => {
-        return Math.floor(Math.random() * max);
+      const createElement = (type) => {
+        if (!type) {
+          return null;
+        }
+
+        const element = document.createElement(type);
+        return element;
+      };
+
+      const addText = (element, text) => {
+        if (!element || !text) {
+          return null;
+        }
+
+        if (Array.isArray(element)) {
+          for (const el of element) {
+            el.innerHTML = text;
+          }
+          return;
+        }
+
+        element.innerHTML = text;
       };
 
       const setId = (element, id) => {
+        if (!element || !id) {
+          return null;
+        }
+
         element.setAttribute("id", id);
       };
 
-      const createElement = (type, id) => {
-        const element = document.createElement(type);
-
-        if (id?.length && 0 < id.length) {
-          element.setAttribute("id", id);
+      const setClass = (element, className) => {
+        if (!element || !className) {
+          return null;
         }
 
+        if (Array.isArray(element)) {
+          for (const el of element) {
+            el.className = className;
+          }
+          return;
+        }
+
+        element.className = className;
+      };
+
+      const createAndSetElement = (type = null, option = {}) => {
+        const { id, className, text } = option;
+        const element = createElement(type);
+        addText(element, text);
+        setId(element, id);
+        setClass(element, className);
         return element;
       };
 
@@ -51,57 +88,34 @@
         parent.appendChild(child);
       };
 
-      const addClass = (element, className) => {
-        if (Array.isArray(element)) {
-          for (const el of element) {
-            el.classList.add(className);
-          }
-          return;
-        }
-        element.classList.add(className);
-      };
-
-      const addText = (element, text) => {
-        if (Array.isArray(element)) {
-          for (const el of element) {
-            el.innerHTML = text;
-          }
-          return;
-        }
-        element.innerHTML = text;
-      };
-
-      const settingInput = () => {
+      const setInput = () => {
         const inputBox = createElement("div");
         const idBox = createElement("div");
-
-        const idSpan = createElement("span");
-        addText(idSpan, "id");
-        const idTextInput = createElement("input", "id-value");
-        insertElement(idBox, idSpan);
-        insertElement(idBox, idTextInput);
-        allInputList.push(idTextInput);
-
         const classBox = createElement("div");
-        const classSpan = createElement("span");
-        addText(classSpan, "class");
-        const classTextInput = createElement("input", "class-value");
-        insertElement(classBox, classSpan);
-        insertElement(classBox, classTextInput);
-        allInputList.push(classTextInput);
-
         const queryBox = createElement("div");
-        const querySpan = createElement("span");
-        addText(querySpan, "query");
-        const queryTextInput = createElement("input", "query-value");
-        insertElement(queryBox, querySpan);
-        insertElement(queryBox, queryTextInput);
-        allInputList.push(queryTextInput);
+        const idSpan = createAndSetElement("span", {
+          text: "id",
+        });
+        const idTextInput = createAndSetElement("input", {
+          id: "id-value",
+        });
+        const classSpan = createAndSetElement("span", {
+          text: "class",
+        });
+        const classTextInput = createAndSetElement("input", {
+          id: "class-value",
+        });
+        const querySpan = createAndSetElement("span", {
+          text: "query",
+        });
+        const queryTextInput = createAndSetElement("input", {
+          id: "query-value",
+        });
 
-        insertElement(inputBox, idBox);
-        insertElement(inputBox, classBox);
-        insertElement(inputBox, queryBox);
-
+        insertElement(idBox, [idSpan, idTextInput]);
+        insertElement(classBox, [classSpan, classTextInput]);
+        insertElement(queryBox, [querySpan, queryTextInput]);
+        insertElement(inputBox, [idBox, classBox, queryBox]);
         insertElement($container, inputBox);
       };
 
@@ -111,30 +125,34 @@
         const BgColorBtnBox = createElement("div");
         const BgBtnList = [];
         for (const color of bgColorClassList) {
-          const newBtn = createElement("button", color);
-          addText(newBtn, `set ${color}`);
+          const newBtn = createAndSetElement("button", {
+            id: color,
+            text: `set ${color}`,
+          });
           BgBtnList.push(newBtn);
           allBtnList.push(newBtn);
         }
-        insertElement(BgColorBtnBox, BgBtnList);
-        insertElement(btnBox, BgColorBtnBox);
 
         const textBtnBox = createElement("div");
         const textStyleList = [];
         for (const textStyle of textStyleClassList) {
-          const newBtn = createElement("button", textStyle);
-          addText(newBtn, `set ${textStyle}`);
+          const newBtn = createAndSetElement("button", {
+            id: textStyle,
+            text: `set ${textStyle}`,
+          });
           textStyleList.push(newBtn);
           allBtnList.push(newBtn);
         }
-        insertElement(textBtnBox, textStyleList);
-        insertElement(btnBox, textBtnBox);
 
-        const resetBtn = createElement("button", "reset");
-        addText(resetBtn, `set Reset style`);
+        const resetBtn = createAndSetElement("button", {
+          id: "reset",
+          text: `set Reset style`,
+        });
         allBtnList.push(resetBtn);
-        insertElement(btnBox, resetBtn);
 
+        insertElement(BgColorBtnBox, BgBtnList);
+        insertElement(textBtnBox, textStyleList);
+        insertElement(btnBox, [BgColorBtnBox, textBtnBox, resetBtn]);
         insertElement($container, btnBox);
       };
 
@@ -148,6 +166,7 @@
         const queryElement = document.querySelector("#query-value");
         const queryValue =
           queryElement.value === "" ? "wrong-query" : queryElement.value;
+
         let queryTargetList = document.querySelectorAll(queryValue);
 
         if (idValue !== "") {
@@ -182,23 +201,36 @@
         }
       };
 
+      const getRandomInt = (max) => {
+        return Math.floor(Math.random() * max);
+      };
+
+      const getRandomClass = () => {
+        const bgIndex = getRandomInt(3);
+        const bgClass = bgColorClassList[bgIndex];
+
+        const textStyleIndex = getRandomInt(4);
+        const textClass = textStyleClassList[textStyleIndex];
+
+        return `${bgClass} ${textClass} test`;
+      };
+
       const load = () => {
         $container.classList.add(container);
 
         for (let i = 1; i <= 16; i++) {
-          const bgIndex = getRandomInt(3);
-          const textStyleIndex = getRandomInt(4);
-          const newElement = createElement("div", `id-${i}`);
-          addText(newElement, `id-${i}`);
-          addClass(newElement, bgColorClassList[bgIndex]);
-          addClass(newElement, textStyleClassList[textStyleIndex]);
+          const newClass = getRandomClass();
+          const newElement = createAndSetElement("div", {
+            id: `id-${i}`,
+            className: newClass,
+            text: i,
+          });
           boxList.push(newElement);
         }
 
-        addClass(boxList, "test");
         insertElement($container, boxList);
 
-        settingInput();
+        setInput();
         setBtn();
 
         for (const btn of allBtnList) {
