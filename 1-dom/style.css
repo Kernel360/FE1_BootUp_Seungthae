@@ -1,0 +1,46 @@
+.bg-red{
+  background-color: red;
+}
+
+.bg-green{
+  background-color: green;
+}
+
+.bg-blue{
+  background-color: blue;
+}
+
+.text-bold{
+  font-weight: bold;
+}
+
+.text-italic{
+  font-style: italic;
+}
+
+.text-strike {
+  text-decoration: line-through;
+}
+
+.text-underline{
+  text-decoration: underline;
+}
+
+.test{
+  display: block;
+  width: 20%;
+  height: 150px;
+  margin: 2%;
+  text-align: center;
+  line-height: 150px;
+
+}
+
+#container{
+  display: flex;
+  flex-wrap: wrap;
+ 
+}
+
+
+

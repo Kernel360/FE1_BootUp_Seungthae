@@ -1,0 +1,214 @@
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kernel360 Web Dev Base</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script>
+    {
+      const container = "container";
+      const boxList = [];
+      const bgColorClassList = ["bg-red", "bg-green", "bg-blue"];
+      const textStyleClassList = [
+        "text-bold",
+        "text-italic",
+        "text-strike",
+        "text-underline",
+      ];
+      const $container = document.getElementById(container);
+      const allBtnList = [];
+      const allInputList = [];
+
+      const getRandomInt = (max) => {
+        return Math.floor(Math.random() * max);
+      };
+
+      const setId = (element, id) => {
+        element.setAttribute("id", id);
+      };
+
+      const createElement = (type, id) => {
+        const element = document.createElement(type);
+
+        if (id?.length && 0 < id.length) {
+          element.setAttribute("id", id);
+        }
+
+        return element;
+      };
+
+      const insertElement = (parent, child) => {
+        if (Array.isArray(child)) {
+          for (const element of child) {
+            parent.appendChild(element);
+          }
+          return;
+        }
+        parent.appendChild(child);
+      };
+
+      const addClass = (element, className) => {
+        if (Array.isArray(element)) {
+          for (const el of element) {
+            el.classList.add(className);
+          }
+          return;
+        }
+        element.classList.add(className);
+      };
+
+      const addText = (element, text) => {
+        if (Array.isArray(element)) {
+          for (const el of element) {
+            el.innerHTML = text;
+          }
+          return;
+        }
+        element.innerHTML = text;
+      };
+
+      const settingInput = () => {
+        const inputBox = createElement("div");
+        const idBox = createElement("div");
+
+        const idSpan = createElement("span");
+        addText(idSpan, "id");
+        const idTextInput = createElement("input", "id-value");
+        insertElement(idBox, idSpan);
+        insertElement(idBox, idTextInput);
+        allInputList.push(idTextInput);
+
+        const classBox = createElement("div");
+        const classSpan = createElement("span");
+        addText(classSpan, "class");
+        const classTextInput = createElement("input", "class-value");
+        insertElement(classBox, classSpan);
+        insertElement(classBox, classTextInput);
+        allInputList.push(classTextInput);
+
+        const queryBox = createElement("div");
+        const querySpan = createElement("span");
+        addText(querySpan, "query");
+        const queryTextInput = createElement("input", "query-value");
+        insertElement(queryBox, querySpan);
+        insertElement(queryBox, queryTextInput);
+        allInputList.push(queryTextInput);
+
+        insertElement(inputBox, idBox);
+        insertElement(inputBox, classBox);
+        insertElement(inputBox, queryBox);
+
+        insertElement($container, inputBox);
+      };
+
+      const setBtn = () => {
+        const btnBox = createElement("div");
+
+        const BgColorBtnBox = createElement("div");
+        const BgBtnList = [];
+        for (const color of bgColorClassList) {
+          const newBtn = createElement("button", color);
+          addText(newBtn, `set ${color}`);
+          BgBtnList.push(newBtn);
+          allBtnList.push(newBtn);
+        }
+        insertElement(BgColorBtnBox, BgBtnList);
+        insertElement(btnBox, BgColorBtnBox);
+
+        const textBtnBox = createElement("div");
+        const textStyleList = [];
+        for (const textStyle of textStyleClassList) {
+          const newBtn = createElement("button", textStyle);
+          addText(newBtn, `set ${textStyle}`);
+          textStyleList.push(newBtn);
+          allBtnList.push(newBtn);
+        }
+        insertElement(textBtnBox, textStyleList);
+        insertElement(btnBox, textBtnBox);
+
+        const resetBtn = createElement("button", "reset");
+        addText(resetBtn, `set Reset style`);
+        allBtnList.push(resetBtn);
+        insertElement(btnBox, resetBtn);
+
+        insertElement($container, btnBox);
+      };
+
+      const changeClass = (e, btn) => {
+        const idElement = document.querySelector("#id-value");
+        const classElement = document.querySelector("#class-value");
+
+        const idValue = idElement.value === "" ? "" : `#id-${idElement.value}`;
+        const classValue =
+          classElement.value === "" ? "" : `.${classElement.value}`;
+        const queryElement = document.querySelector("#query-value");
+        const queryValue =
+          queryElement.value === "" ? "wrong-query" : queryElement.value;
+        let queryTargetList = document.querySelectorAll(queryValue);
+
+        if (idValue !== "") {
+          queryTargetList = document.querySelectorAll(idValue);
+        } else if (classValue !== "") {
+          queryTargetList = document.querySelectorAll(classValue);
+        }
+
+        if (queryTargetList === null) {
+          return;
+        }
+
+        for (const target of queryTargetList) {
+          if (btn.id === "reset") {
+            target.className = "test";
+            continue;
+          }
+
+          const targetClassName = target.className.split(" ");
+          const newClassName = targetClassName.map((value) => {
+            if (value.includes("bg") && btn.id.includes("bg")) {
+              return "";
+            }
+            if (value.includes("text") && btn.id.includes("text")) {
+              return "";
+            }
+
+            return value;
+          });
+          newClassName.push(btn.id);
+          target.className = newClassName.join(" ");
+        }
+      };
+
+      const load = () => {
+        $container.classList.add(container);
+
+        for (let i = 1; i <= 16; i++) {
+          const bgIndex = getRandomInt(3);
+          const textStyleIndex = getRandomInt(4);
+          const newElement = createElement("div", `id-${i}`);
+          addText(newElement, `id-${i}`);
+          addClass(newElement, bgColorClassList[bgIndex]);
+          addClass(newElement, textStyleClassList[textStyleIndex]);
+          boxList.push(newElement);
+        }
+
+        addClass(boxList, "test");
+        insertElement($container, boxList);
+
+        settingInput();
+        setBtn();
+
+        for (const btn of allBtnList) {
+          btn.addEventListener("click", (e) => {
+            changeClass(e, btn);
+          });
+        }
+      };
+
+      window.addEventListener("load", load);
+    }
+  </script>
+</html>
