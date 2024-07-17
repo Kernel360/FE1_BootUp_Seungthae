@@ -1,4 +1,4 @@
-const a  = () => {
+const directDomControl  = () => {
   const container = "container";
   const boxList = [];
   const bgColorClassList = ["bg-red", "bg-green", "bg-blue"];
@@ -232,45 +232,5 @@ const a  = () => {
   window.addEventListener("load", load);
 }
 
-export{a}
+export{directDomControl}
 
-
-class BoxElement{
-  #id;
-  #content;
-  #textStyle;
-  #boxStyle;
-  
-  constructor(id = '', content = '', textStyle = '', boxStyle = ''){
-    this.#id = id;
-    this.#content = content;
-    this.#textStyle = textStyle;
-    this.#boxStyle = boxStyle;
-  }
-
-  getStyle(){
-    return `${this.#textStyle} ${this.#boxStyle}`;
-  }
-
-  setTextStyle(newTextStyle){
-    this.#textStyle = newTextStyle;
-    return;
-  }
-
-  setBoxStyle(newBoxStyle){
-    this.#boxStyle = newBoxStyle;
-  }
-
-  isBoxElementId(id){
-    return this.#id === id;
-  }
-
-  isBoxElementTextStyle(textStyle){
-    return this.#textStyle === textStyle;
-  }
-
-  isBoxElementBoxStyle(boxStyle){
-    return this.#boxStyle === boxStyle;
-  } 
-
-}
